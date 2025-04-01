@@ -36,6 +36,7 @@
 		<grpc.kotlin.version>1.3.0</grpc.kotlin.version>
 		<protobuf.protoc.version>3.20.1</protobuf.protoc.version>
 		<protobuf.version>4.30.2</protobuf.version>
+		<jooq.version>3.20.2</jooq.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -100,6 +101,35 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
+		</dependency>
+		<!-- jOOQ Runtime (Required at runtime to execute generated code) -->
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
+		<!-- jOOQ Code Generation Runtime -->
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta-extensions</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-codegen</artifactId>
+			<version>${jooq.version}</version>
 		</dependency>
 	</dependencies>
 	<dependencyManagement>
@@ -194,6 +224,52 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+
+
+			<plugin>
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<version>${jooq.version}</version>
+				<executions>
+					<execution>
+						<id>generate-jooq-code</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<generator>
+						<name>org.jooq.codegen.KotlinGenerator</name>
+						<database>
+							<name>org.jooq.meta.postgres.PostgresDatabase</name>
+							<inputSchema>public</inputSchema>
+						</database>
+						<generate>
+							<deprecated>false</deprecated>
+							<kotlinSetterJvmNameAnnotationsOnIsPrefix>true</kotlinSetterJvmNameAnnotationsOnIsPrefix>
+							<pojosAsKotlinDataClasses>true</pojosAsKotlinDataClasses>
+							<fluentSetters>true</fluentSetters>
+						</generate>
+						<target>
+							<packageName>com.akedev7</packageName>
+							<directory>target/generated-sources/jooq</directory>
+						</target>
+						<strategy>
+							<name>org.jooq.codegen.DefaultGeneratorStrategy</name>
+						</strategy>
+					</generator>
+					<jdbc>
+						<driver>org.postgresql.Driver</driver>
+						<url>jdbc:postgresql://localhost:5432/appdb</url>
+						<user>postgres</user>
+						<password>postgres</password>
+					</jdbc>
+					<logging>WARN</logging>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
