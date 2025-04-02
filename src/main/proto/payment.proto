@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package com.akedev7.pos.controller;
 
+import "google/type/decimal.proto";
 import "src/google/protobuf/timestamp.proto";
 
 service PaymentService {
@@ -10,8 +11,8 @@ service PaymentService {
 
 message PaymentRequest {
     string customerId = 1;
-    double price = 2;
-    double priceModifier = 3;
+    google.type.Decimal price = 2;
+    google.type.Decimal priceModifier = 3;
     string paymentMethod = 4;
     google.protobuf.Timestamp datetime = 5;
     map<string, string> additionalItem = 6;

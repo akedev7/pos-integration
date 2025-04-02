@@ -29,13 +29,15 @@ class PaymentRuleEngine(ctx: DSLContext) {
         }.toList()
     }
 
-    fun calculatePoint(payment: Payment): BigDecimal {
+    fun getPaymentCalculationResult(payment: Payment): PaymentCalculationResult {
         val context = StandardEvaluationContext(payment)
-
-        val (_, pointModifier) = paymentRule.first {
-            parser.parseExpression(it.condition).getValue(context, Boolean::class.java) == true
-        }
-        return payment.price * pointModifier
+        val matchingRule = paymentRule.firstOrNull { rule ->
+            parser.parseExpression(rule.condition)
+                .getValue(context, Boolean::class.java) == true
+        } ?: throw NoSuchElementException("No matching rule found for payment: $payment")
+        val point = payment.price.multiply(matchingRule.pointModifier)
+        val price = payment.price.multiply(payment.priceModifier)
+        return PaymentCalculationResult(point,price)
     }
 
 }
