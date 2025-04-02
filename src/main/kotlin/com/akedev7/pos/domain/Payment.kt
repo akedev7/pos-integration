@@ -4,6 +4,7 @@ package com.akedev7.pos.domain
 import com.google.protobuf.Timestamp
 import java.math.BigDecimal
 import com.akedev7.pos.controller.Payment.PaymentRequest
+import com.google.protobuf.Struct
 import com.google.type.Decimal
 
 data class Payment(
@@ -12,7 +13,7 @@ data class Payment(
     val priceModifier: BigDecimal,
     val paymentMethod: String,
     val datetime: Timestamp,
-    val additionalItem: Map<String, String>
+    val additionalItem: Struct
 )
 
 fun Decimal.toBigDecimal(): BigDecimal {
@@ -27,6 +28,6 @@ fun PaymentRequest.toDomainObject(): Payment {
         priceModifier = this.priceModifier.toBigDecimal(),
         paymentMethod = this.paymentMethod,
         datetime = this.datetime,
-        additionalItem = this.additionalItemMap
+        additionalItem = this.additionalItem
     )
 }

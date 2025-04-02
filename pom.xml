@@ -159,6 +159,11 @@
 			<artifactId>grpc-testing</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java-util</artifactId>
+			<version>4.30.2</version> <!-- Update to latest version -->
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

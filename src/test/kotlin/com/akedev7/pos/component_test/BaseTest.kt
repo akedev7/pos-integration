@@ -15,6 +15,7 @@ abstract class BaseTest {
             withPassword("postgres")
             start()
         }
+        @JvmStatic
         @DynamicPropertySource
         fun configureProperties(registry: DynamicPropertyRegistry) {
             registry.add("spring.datasource.url") { postgresContainer.jdbcUrl }
