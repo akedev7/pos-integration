@@ -5,15 +5,15 @@ CREATE TABLE payment_rule (
 );
 
 INSERT INTO payment_rule (conditions, points_percentage) VALUES
-('paymentMethod == ''CASH'' and ((priceModifier >= 0.9) and (priceModifier <= 1.0))', 5.00),
-('paymentMethod == ''CASH_ON_DELIVERY'' and ((priceModifier >= 1) and (priceModifier <= 1.2)) and (additionalItem[''courier''] == ''YAMATO'' or additionalItem[''courier''] == ''SAGAWA'')', 5.00),
-('paymentMethod == ''VISA'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''MASTERCARD'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''AMEX'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''JCB'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''LINE_PAY'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''PAYPAY'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''POINTS'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''GRAB_PAY'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''BANK_TRANSFER'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00),
-('paymentMethod == ''CHEQUE'' and ((priceModifier >= 0.9) and (priceModifier <= 2.0))', 5.00);
+('paymentMethod == ''CASH'' and ((priceModifier >= 0.9) and (priceModifier <= 1.0))', 0.05),
+('paymentMethod == ''CASH_ON_DELIVERY'' and ((priceModifier >= 1) and (priceModifier <= 1.02)) and (additionalItem[''courier''] == ''YAMATO'' or additionalItem[''courier''] == ''SAGAWA'')', 0.03),
+('paymentMethod == ''VISA'' and ((priceModifier >= 0.95) and (priceModifier <= 1.0))', 0.03),
+('paymentMethod == ''MASTERCARD'' and ((priceModifier >= 0.95) and (priceModifier <= 1))', 0.03),
+('paymentMethod == ''AMEX'' and ((priceModifier >= 0.98) and (priceModifier <= 1.01))', 0.02),
+('paymentMethod == ''JCB'' and ((priceModifier >= 0.95) and (priceModifier <= 1.0))', 0.05),
+('paymentMethod == ''LINE_PAY'' and priceModifier == 1', 0.01),
+('paymentMethod == ''PAYPAY'' and priceModifier == 1', 0.01),
+('paymentMethod == ''POINTS'' and priceModifier == 1', 0),
+('paymentMethod == ''GRAB_PAY'' and priceModifier == 1', 0.01),
+('paymentMethod == ''BANK_TRANSFER'' and priceModifier == 1', 0),
+('paymentMethod == ''CHEQUE'' and ((priceModifier >= 0.9) and (priceModifier <= 1.0))', 0);

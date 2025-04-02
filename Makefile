@@ -44,3 +44,6 @@ help:
 	@echo "  clean    - Remove container and volumes"
 	@echo "  env      - Create .env file with current settings"
 	@echo "  help     - Show this help message"
+
+migrate:
+	./mvnw flyway:migrate

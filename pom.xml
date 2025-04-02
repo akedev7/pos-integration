@@ -33,8 +33,8 @@
 		<protobuf-java.version>3.25.6</protobuf-java.version>
 		<spring-grpc.version>0.5.0</spring-grpc.version>
 		<java.grpc.version>1.71.0</java.grpc.version>
-		<grpc.kotlin.version>1.3.0</grpc.kotlin.version>
-		<protobuf.protoc.version>3.20.1</protobuf.protoc.version>
+		<grpc.kotlin.version>1.4.1</grpc.kotlin.version>
+		<protobuf.protoc.version>3.25.6</protobuf.protoc.version>
 		<protobuf.version>4.30.2</protobuf.version>
 		<jooq.version>3.20.2</jooq.version>
 	</properties>
@@ -136,6 +136,29 @@
 			<artifactId>jackson-module-kotlin</artifactId>
 			<version>2.18.3</version>
 		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<version>1.20.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>1.20.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>1.20.6</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-testing</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -153,6 +176,16 @@
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 		<plugins>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>11.5.0</version>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/appdb</url>
+					<user>postgres</user>
+					<password>postgres</password>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>

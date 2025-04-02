@@ -20,14 +20,6 @@ CREATE TABLE customer_payments (
     datetime TIMESTAMP WITH TIME ZONE NOT NULL,
     metadata JSONB,
 
-    CONSTRAINT valid_payment_method CHECK (payment_method IN (
-        'CASH_ON_DELIVERY',
-        'CREDIT_CARD',
-        'BANK_TRANSFER',
-        'PAYPAL',
-        'OTHER'
-    )),
-
     CONSTRAINT positive_price CHECK (price >= 0),
     CONSTRAINT positive_price_modifier CHECK (price_modifier > 0),
 
