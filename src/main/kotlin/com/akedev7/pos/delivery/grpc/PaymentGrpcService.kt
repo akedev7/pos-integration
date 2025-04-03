@@ -25,11 +25,10 @@ class PaymentGrpcService(val paymentRuleEngine: PaymentRuleEngine, val paymentRe
             toDomainObject.additionalItem
         )
         paymentRepository.insertPayment(paymentDAO)
-        val response = Payment.PaymentResponse.newBuilder()
+
+        return Payment.PaymentResponse.newBuilder()
             .setFinalPrice(paymentCalculationResult.defaultPoints.toDouble())
             .setPoints(paymentCalculationResult.ruleAdjustedPoints.toInt())
             .build()
-
-      return response
     }
 }

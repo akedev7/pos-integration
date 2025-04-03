@@ -17,27 +17,29 @@ class PaymentRuleEngine(ctx: DSLContext) {
     )
 
     private final val parser: ExpressionParser = SpelExpressionParser()
-    private final val paymentRule: List<PaymentRuleDTO>
+    private final val paymentRule: Map<String, PaymentRuleDTO>
 
     init {
         val rules = ctx.selectFrom(PAYMENT_RULE).fetch()
         paymentRule = rules.map { rule ->
-            PaymentRuleDTO(
-                rule.conditions!!,
-                rule.pointsPercentage!!
-            )
-        }.toList()
+            rule.paymentMethod!! to
+                    PaymentRuleDTO(
+                        rule.conditions!!, rule.pointsPercentage ?: BigDecimal.ONE
+                    )
+        }.toMap()
     }
 
     fun getPaymentCalculationResult(payment: Payment): PaymentCalculationResult {
-        val context = StandardEvaluationContext(payment)
-        val matchingRule = paymentRule.firstOrNull { rule ->
-            parser.parseExpression(rule.condition)
-                .getValue(context, Boolean::class.java) == true
-        } ?: throw NoSuchElementException("No matching rule found for payment: $payment")
-        val point = payment.price.multiply(matchingRule.pointModifier)
-        val price = payment.price.multiply(payment.priceModifier)
-        return PaymentCalculationResult(point,price)
+        if (isRuleMatched(payment)) {
+            val point = payment.price.multiply(paymentRule[payment.paymentMethod]?.pointModifier)
+            val price = payment.price.multiply(payment.priceModifier)
+            return PaymentCalculationResult(point, price)
+        }
+        throw NoSuchElementException("No matching rule found for payment: $payment")
     }
 
+    private fun isRuleMatched(payment: Payment): Boolean =
+        parser.parseExpression(paymentRule[payment.paymentMethod]!!.condition)
+            .getValue(StandardEvaluationContext(payment), Boolean::class.java) ?: false
 }
+

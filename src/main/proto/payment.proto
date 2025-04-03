@@ -8,6 +8,7 @@ import "src/google/protobuf/timestamp.proto";
 
 service PaymentService {
     rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
+    rpc GetSalesData (SalesDataRequest) returns (SalesDataResponse);
 }
 
 message PaymentRequest {
@@ -22,4 +23,19 @@ message PaymentRequest {
 message PaymentResponse {
     double finalPrice = 1;
     int32 points = 2;
+}
+
+message SalesDataRequest {
+    google.protobuf.Timestamp startDateTime = 1;
+    google.protobuf.Timestamp endDateTime = 2;
+}
+
+message SalesDataResponse {
+    repeated SalesRecord sales = 1;
+}
+
+message SalesRecord {
+    google.protobuf.Timestamp datetime = 1;
+    google.type.Decimal sales = 2;
+    int32 points = 3;
 }
