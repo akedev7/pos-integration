@@ -1,6 +1,7 @@
-package com.akedev7.pos.rule_engine
+package com.akedev7.pos.application.rule_engine
 
-import com.akedev7.pos.domain.Payment
+import com.akedev7.pos.application.rule_engine.model.PaymentCalculationResult
+import com.akedev7.pos.domain.model.Payment
 import com.akedev7.tables.PaymentRule.Companion.PAYMENT_RULE
 import org.jooq.DSLContext
 import org.springframework.expression.ExpressionParser
@@ -33,7 +34,7 @@ class PaymentRuleEngine(ctx: DSLContext) {
         if (isRuleMatched(payment)) {
             val point = payment.price.multiply(paymentRule[payment.paymentMethod]?.pointModifier)
             val price = payment.price.multiply(payment.priceModifier)
-            return PaymentCalculationResult(point, price)
+            return PaymentCalculationResult(price, point)
         }
         throw NoSuchElementException("No matching rule found for payment: $payment")
     }

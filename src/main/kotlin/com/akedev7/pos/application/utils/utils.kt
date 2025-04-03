@@ -1,4 +1,4 @@
-package com.akedev7.pos.utils
+package com.akedev7.pos.application.utils
 
 import com.google.protobuf.Struct
 import com.google.protobuf.Timestamp
