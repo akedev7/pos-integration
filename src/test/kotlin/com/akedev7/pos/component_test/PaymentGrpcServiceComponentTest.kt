@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 @SpringBootTest
 @DirtiesContext
-class MyGrpcServiceComponentTest : BaseTest() {
+class PaymentGrpcServiceComponentTest : BaseTest() {
 
     @Autowired
     lateinit var dsl: DSLContext

@@ -1,11 +1,11 @@
 package com.akedev7.pos.domain
 
 
+import com.akedev7.pos.controller.Payment.PaymentRequest
+import com.akedev7.pos.utils.toBigDecimal
+import com.google.protobuf.Struct
 import com.google.protobuf.Timestamp
 import java.math.BigDecimal
-import com.akedev7.pos.controller.Payment.PaymentRequest
-import com.google.protobuf.Struct
-import com.google.type.Decimal
 
 data class Payment(
     val customerId: Long,
@@ -15,10 +15,6 @@ data class Payment(
     val datetime: Timestamp,
     val additionalItem: Struct
 )
-
-fun Decimal.toBigDecimal(): BigDecimal {
-    return BigDecimal(this.value)
-}
 
 // Converts gRPC objects to domain objects
 fun PaymentRequest.toDomainObject(): Payment {

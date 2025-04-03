@@ -1,6 +1,5 @@
 package com.akedev7.pos.component_test
 
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.TestInstance
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
@@ -22,10 +21,5 @@ abstract class BaseTest {
             registry.add("spring.datasource.username") { postgresContainer.username }
             registry.add("spring.datasource.password") { postgresContainer.password }
         }
-    }
-
-    @AfterAll
-    fun cleanup() {
-        postgresContainer.stop()
     }
 }

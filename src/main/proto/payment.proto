@@ -8,6 +8,9 @@ import "src/google/protobuf/timestamp.proto";
 
 service PaymentService {
     rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
+}
+
+service SalesService {
     rpc GetSalesData (SalesDataRequest) returns (SalesDataResponse);
 }
 
