@@ -1,15 +1,14 @@
 package com.akedev7.pos.adapters.grpc
 
 
-import com.akedev7.pos.controller.Payment
-import com.akedev7.pos.controller.SalesServiceGrpcKt
-import com.akedev7.pos.adapters.postgres.SalesRepository
 import com.akedev7.pos.application.service.SalesService
 import com.akedev7.pos.application.utils.toOffsetDateTime
+import com.akedev7.pos.controller.Payment
+import com.akedev7.pos.controller.SalesServiceGrpcKt
 import com.akedev7.pos.domain.model.SalesSummary
 import com.google.protobuf.Timestamp
 import com.google.type.Decimal
-import org.springframework.grpc.server.service.GrpcService
+import net.devh.boot.grpc.server.service.GrpcService
 import java.time.Instant
 import java.time.OffsetDateTime
 

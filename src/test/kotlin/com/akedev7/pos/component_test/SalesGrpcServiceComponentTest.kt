@@ -1,13 +1,14 @@
 package com.akedev7.pos.component_test
 
-import com.akedev7.pos.controller.Payment
 import com.akedev7.pos.controller.Payment.SalesDataRequest
+import com.akedev7.pos.controller.PaymentServiceGrpcKt
 import com.akedev7.pos.controller.SalesServiceGrpcKt
 import com.akedev7.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
 import com.google.protobuf.Timestamp
 import com.google.type.Decimal
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.runBlocking
+import net.devh.boot.grpc.client.inject.GrpcClient
 import org.assertj.core.api.Assertions.assertThat
 import org.jooq.DSLContext
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +28,9 @@ class SalesGrpcServiceComponentTest : BaseTest() {
 
     @Autowired
     lateinit var dsl: DSLContext
+
+    @GrpcClient("inProcess")
+    private lateinit var grpcStub: SalesServiceGrpcKt.SalesServiceCoroutineStub
 
     private fun prepareData() {
         // Clear existing data
@@ -75,10 +79,8 @@ class SalesGrpcServiceComponentTest : BaseTest() {
     @Test
     fun `should return sales data aggregated by hour`(): Unit = runBlocking {
         prepareData()
-        val channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build()
-        val client = SalesServiceGrpcKt.SalesServiceCoroutineStub(channel)
         val secondsThreeYearsAgo = System.currentTimeMillis() / 1000 - TimeUnit.DAYS.toSeconds((365 * 3).toLong())
-        val response = client.getSalesData(
+        val response = grpcStub.getSalesData(
             SalesDataRequest.newBuilder()
                 .setStartDateTime(
                     Timestamp.newBuilder()

@@ -12,3 +12,16 @@ spring:
     locations: classpath:db/migration
   jooq:
     sql-dialect: POSTGRES
+  grpc:
+    server:
+      health:
+        enabled: false
+
+grpc:
+  server:
+    port: 9090
+    in-process-name: pos-integration
+  client:
+    inProcess:
+      address: in-process:pos-integration
+      negotiation-type: PLAINTEXT

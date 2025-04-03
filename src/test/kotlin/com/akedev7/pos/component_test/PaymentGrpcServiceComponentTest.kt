@@ -9,11 +9,13 @@ import com.google.protobuf.Value
 import com.google.type.Decimal
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.runBlocking
+import net.devh.boot.grpc.client.inject.GrpcClient
 import org.jooq.DSLContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.context.annotation.Profile
 import org.springframework.test.annotation.DirtiesContext
 import java.util.stream.Stream
 import kotlin.test.assertEquals
@@ -21,10 +23,13 @@ import kotlin.test.assertEquals
 
 @SpringBootTest
 @DirtiesContext
-class PaymentGrpcServiceComponentTest : BaseTest() {
+class PaymentGrpcServiceComponentTest() : BaseTest() {
 
     @Autowired
     lateinit var dsl: DSLContext
+
+    @GrpcClient("inProcess")
+    private lateinit var grpcStub: PaymentServiceGrpcKt.PaymentServiceCoroutineStub
 
     companion object {
         @JvmStatic
@@ -122,15 +127,12 @@ class PaymentGrpcServiceComponentTest : BaseTest() {
     fun should_create_payment_in_db_when_call_process_payment_given_valid_payment_request(
         testData: PaymentTestData
     ): Unit = runBlocking {
-        val channel = ManagedChannelBuilder.forAddress("localhost", 9090).usePlaintext().build()
-        val client = PaymentServiceGrpcKt.PaymentServiceCoroutineStub(channel)
-
         val additionalItemBuilder = Struct.newBuilder()
         testData.additionalFields.forEach { (key, value) ->
             additionalItemBuilder.putFields(key, Value.newBuilder().setStringValue(value).build())
         }
 
-        val response = client.processPayment(
+        val response = grpcStub.processPayment(
             PaymentRequest.newBuilder()
                 .setCustomerId("1")
                 .setPrice(Decimal.newBuilder().setValue("100.00").build())

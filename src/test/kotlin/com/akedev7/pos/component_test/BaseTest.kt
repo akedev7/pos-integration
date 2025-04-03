@@ -1,6 +1,7 @@
 package com.akedev7.pos.component_test
 
 import org.junit.jupiter.api.TestInstance
+import org.springframework.context.annotation.Profile
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer

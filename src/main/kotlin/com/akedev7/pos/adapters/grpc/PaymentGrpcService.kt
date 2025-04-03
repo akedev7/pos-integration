@@ -5,7 +5,7 @@ import com.akedev7.pos.controller.Payment
 import com.akedev7.pos.controller.PaymentServiceGrpcKt
 import com.akedev7.pos.application.service.PaymentService
 import com.akedev7.pos.application.utils.toBigDecimal
-import org.springframework.grpc.server.service.GrpcService
+import net.devh.boot.grpc.server.service.GrpcService
 
 @GrpcService
 class PaymentGrpcService(private val paymentService: PaymentService) : PaymentServiceGrpcKt.PaymentServiceCoroutineImplBase() {
