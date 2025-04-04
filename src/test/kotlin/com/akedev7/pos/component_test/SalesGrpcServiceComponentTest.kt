@@ -1,7 +1,7 @@
 package com.akedev7.pos.component_test
 
-import com.akedev7.pos.controller.Payment.SalesDataRequest
-import com.akedev7.pos.controller.SalesServiceGrpcKt
+import com.akedev7.pos.adapters.grpc.protobuf.Payment
+import com.akedev7.pos.adapters.grpc.protobuf.SalesServiceGrpcKt
 import com.akedev7.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
 import com.google.protobuf.Timestamp
 import com.google.type.Decimal
@@ -79,7 +79,7 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
         prepareData()
         val secondsThreeYearsAgo = System.currentTimeMillis() / 1000 - TimeUnit.DAYS.toSeconds((365 * 3).toLong())
         val response = grpcStub.getSalesData(
-            SalesDataRequest.newBuilder()
+            Payment.SalesDataRequest.newBuilder()
                 .setStartDateTime(
                     Timestamp.newBuilder()
                         .setSeconds(secondsThreeYearsAgo)

@@ -3,8 +3,8 @@ package com.akedev7.pos.adapters.grpc.payment
 
 import com.akedev7.pos.adapters.grpc.payment.validation.PaymentRequestValidator
 import com.akedev7.pos.adapters.grpc.payment.validation.PaymentValidationException
-import com.akedev7.pos.controller.Payment
-import com.akedev7.pos.controller.PaymentServiceGrpcKt
+import com.akedev7.pos.adapters.grpc.protobuf.Payment
+import com.akedev7.pos.adapters.grpc.protobuf.PaymentServiceGrpcKt
 import com.akedev7.pos.application.service.PaymentService
 import com.akedev7.pos.application.utils.toBigDecimal
 import com.akedev7.pos.application.utils.toOffsetDateTime

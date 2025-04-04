@@ -1,7 +1,7 @@
 package com.akedev7.pos.adapters.grpc.validation
 
 import com.akedev7.pos.adapters.grpc.payment.validation.PaymentRequestValidator
-import com.akedev7.pos.controller.Payment
+import com.akedev7.pos.adapters.grpc.protobuf.Payment
 import com.google.protobuf.Struct
 import com.google.protobuf.Timestamp
 import com.google.type.Decimal

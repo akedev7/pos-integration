@@ -1,7 +1,7 @@
 package com.akedev7.pos.component_test
 
-import com.akedev7.pos.controller.Payment.PaymentRequest
-import com.akedev7.pos.controller.PaymentServiceGrpcKt
+import com.akedev7.pos.adapters.grpc.protobuf.Payment
+import com.akedev7.pos.adapters.grpc.protobuf.PaymentServiceGrpcKt
 import com.akedev7.tables.references.CUSTOMER_PAYMENTS
 import com.google.protobuf.Struct
 import com.google.protobuf.Timestamp
@@ -137,7 +137,7 @@ class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
         }
 
         val response = grpcStub.processPayment(
-            PaymentRequest.newBuilder()
+            Payment.PaymentRequest.newBuilder()
                 .setCustomerId("1")
                 .setPrice(Decimal.newBuilder().setValue("100.00").build())
                 .setPriceModifier(Decimal.newBuilder().setValue(testData.priceModifier).build())
@@ -165,7 +165,7 @@ class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
     fun `should return invalid argument error given invalid condition`(): Unit = runBlocking {
         val ex = assertThrows<StatusException> {
             grpcStub.processPayment(
-                PaymentRequest.newBuilder()
+                Payment.PaymentRequest.newBuilder()
                     .setCustomerId("1")
                     .setPrice(Decimal.newBuilder().setValue("100.00").build())
                     .setPriceModifier(Decimal.newBuilder().setValue("2").build())
@@ -196,7 +196,7 @@ class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
     fun `should return invalid argument error given invalid argument`(): Unit = runBlocking {
         val ex = assertThrows<StatusException> {
             grpcStub.processPayment(
-                PaymentRequest.newBuilder()
+                Payment.PaymentRequest.newBuilder()
                     .build()
             )
 

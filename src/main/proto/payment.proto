@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package com.akedev7.pos.controller;
+package com.akedev7.pos.adapters.grpc.protobuf;
 
 import "google/type/decimal.proto";
 import "src/google/protobuf/struct.proto";

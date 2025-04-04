@@ -1,6 +1,6 @@
 package com.akedev7.pos.adapters.grpc.payment.validation
 
-import com.akedev7.pos.controller.Payment
+import com.akedev7.pos.adapters.grpc.protobuf.Payment
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
