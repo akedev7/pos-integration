@@ -2,7 +2,7 @@ package com.akedev7.pos.component_test
 
 import com.akedev7.pos.adapters.grpc.protobuf.Payment
 import com.akedev7.pos.adapters.grpc.protobuf.SalesServiceGrpcKt
-import com.akedev7.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
+import com.akedev7.pos.adapters.postgres.jooq.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
 import com.google.protobuf.Timestamp
 import com.google.type.Decimal
 import kotlinx.coroutines.runBlocking

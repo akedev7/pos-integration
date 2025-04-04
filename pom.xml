@@ -290,7 +290,7 @@
 							<fluentSetters>true</fluentSetters>
 						</generate>
 						<target>
-							<packageName>com.akedev7</packageName>
+							<packageName>com.akedev7.pos.adapters.postgres.jooq</packageName>
 							<directory>target/generated-sources/jooq</directory>
 						</target>
 						<strategy>

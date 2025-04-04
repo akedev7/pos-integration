@@ -1,9 +1,9 @@
 package com.akedev7.pos.adapters.postgres
 
+import com.akedev7.pos.adapters.postgres.jooq.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
 import com.akedev7.pos.application.utils.structToString
 import com.akedev7.pos.domain.model.Payment
 import com.akedev7.pos.domain.port.IPaymentRepository
-import com.akedev7.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
 import org.jooq.DSLContext
 import org.jooq.JSONB
 import org.springframework.stereotype.Repository

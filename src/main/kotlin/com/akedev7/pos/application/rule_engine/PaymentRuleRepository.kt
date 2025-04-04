@@ -1,7 +1,7 @@
 package com.akedev7.pos.application.rule_engine
 
+import com.akedev7.pos.adapters.postgres.jooq.tables.PaymentRule.Companion.PAYMENT_RULE
 import com.akedev7.pos.application.rule_engine.model.PaymentRule
-import com.akedev7.tables.PaymentRule.Companion.PAYMENT_RULE
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
 import java.math.BigDecimal
