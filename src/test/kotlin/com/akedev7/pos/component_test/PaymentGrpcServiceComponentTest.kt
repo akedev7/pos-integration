@@ -6,16 +6,21 @@ import com.akedev7.tables.references.CUSTOMER_PAYMENTS
 import com.google.protobuf.Struct
 import com.google.protobuf.Timestamp
 import com.google.protobuf.Value
+import com.google.rpc.ErrorInfo
 import com.google.type.Decimal
-import io.grpc.ManagedChannelBuilder
+import io.grpc.StatusException
+import io.grpc.StatusRuntimeException
+import io.grpc.protobuf.StatusProto
 import kotlinx.coroutines.runBlocking
 import net.devh.boot.grpc.client.inject.GrpcClient
+import org.assertj.core.api.Assertions.assertThat
 import org.jooq.DSLContext
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.Profile
 import org.springframework.test.annotation.DirtiesContext
 import java.util.stream.Stream
 import kotlin.test.assertEquals
@@ -124,12 +129,13 @@ class PaymentGrpcServiceComponentTest() : BaseTest() {
 
     @ParameterizedTest
     @MethodSource("paymentMethodProvider")
-    fun should_create_payment_in_db_when_call_process_payment_given_valid_payment_request(
+    fun `should create payment in db when call process payment given valid payment request`(
         testData: PaymentTestData
     ): Unit = runBlocking {
-        val additionalItemBuilder = Struct.newBuilder()
-        testData.additionalFields.forEach { (key, value) ->
-            additionalItemBuilder.putFields(key, Value.newBuilder().setStringValue(value).build())
+        val additionalItemBuilder = Struct.newBuilder().apply {
+            testData.additionalFields.forEach { (key, value) ->
+                putFields(key, Value.newBuilder().setStringValue(value).build())
+            }
         }
 
         val response = grpcStub.processPayment(
@@ -155,5 +161,36 @@ class PaymentGrpcServiceComponentTest() : BaseTest() {
         assertEquals(testData.expectedPoints, response.points)
         assertEquals(testData.expectedFinalPrice, response.finalPrice)
         assertEquals(testData.paymentMethod, actual!!.paymentMethod)
+    }
+
+    @Test
+    fun `should return invalid argument error given invalid condition`(): Unit = runBlocking {
+        val ex = assertThrows<StatusException> {
+            grpcStub.processPayment(
+                PaymentRequest.newBuilder()
+                    .setCustomerId("1")
+                    .setPrice(Decimal.newBuilder().setValue("100.00").build())
+                    .setPriceModifier(Decimal.newBuilder().setValue("2").build())
+                    .setPaymentMethod("MASTERCARD")
+                    .setDatetime(
+                        Timestamp.newBuilder()
+                            .setSeconds(System.currentTimeMillis() / 1000)
+                            .build()
+                    )
+                    .setAdditionalItem(
+                        Struct.newBuilder()
+                            .putFields("last4", Value.newBuilder().setStringValue("1234").build())
+                            .build()
+                    )
+                    .build()
+            )
+
+        }
+        assertThat(ex.status.code.name).isEqualTo("INVALID_ARGUMENT")
+
+        val status = StatusProto.fromThrowable(ex)
+        val errorInfo = status?.detailsList?.find { it.`is`(ErrorInfo::class.java) }?.unpack(com.google.rpc.ErrorInfo::class.java)
+        assertThat(errorInfo?.reason).isEqualTo("INVALID_ARGUMENT")
+        assertThat(errorInfo?.metadataMap?.get("details")).contains("No matching rule found for your payment")
     }
 }

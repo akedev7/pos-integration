@@ -19,10 +19,10 @@ class SalesGrpcService(private val salesService: SalesService) : SalesServiceGrp
             request.startDateTime.toOffsetDateTime(),
             request.endDateTime.toOffsetDateTime()
         )
-        return convertJooqResultToGrpcResponse(salesSummary)
+        return getGrpcResponse(salesSummary)
     }
 
-    fun convertJooqResultToGrpcResponse(salesSummary: SalesSummary): Payment.SalesDataResponse {
+    fun getGrpcResponse(salesSummary: SalesSummary): Payment.SalesDataResponse {
         val builder = Payment.SalesDataResponse.newBuilder()
 
         salesSummary.sales.forEach { record ->

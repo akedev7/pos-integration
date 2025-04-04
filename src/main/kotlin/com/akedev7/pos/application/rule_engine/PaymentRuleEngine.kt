@@ -36,7 +36,7 @@ class PaymentRuleEngine(ctx: DSLContext) {
             val price = payment.price.multiply(payment.priceModifier)
             return PaymentCalculationResult(price, point)
         }
-        throw NoSuchElementException("No matching rule found for payment: $payment")
+        throw IllegalArgumentException("No matching rule found for your payment")
     }
 
     private fun isRuleMatched(payment: Payment): Boolean =
