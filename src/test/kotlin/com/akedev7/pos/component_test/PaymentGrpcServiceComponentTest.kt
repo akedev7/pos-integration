@@ -19,9 +19,6 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.annotation.DirtiesContext
-import org.springframework.test.context.ActiveProfiles
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 
@@ -92,12 +89,14 @@ class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
             PaymentTestData(
                 paymentMethod = "CHEQUE",
                 priceModifier = "1",
+                additionalFields = mapOf("bankName" to "Bangkok", "chequeNumber" to "123456"),
                 expectedPoints = 0,
                 expectedFinalPrice = 100.0
             ),
             PaymentTestData(
                 paymentMethod = "BANK_TRANSFER",
                 priceModifier = "1",
+                additionalFields = mapOf("bankName" to "Bangkok", "bankAccount" to "123456"),
                 expectedPoints = 0,
                 expectedFinalPrice = 100.0
             ),

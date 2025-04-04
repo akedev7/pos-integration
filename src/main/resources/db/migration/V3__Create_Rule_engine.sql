@@ -16,5 +16,5 @@ INSERT INTO payment_rule (payment_method, conditions, points_percentage) VALUES
 ('PAYPAY', 'priceModifier == 1', 0.01),
 ('POINTS', 'priceModifier == 1', 0),
 ('GRAB_PAY', 'priceModifier == 1', 0.01),
-('BANK_TRANSFER', 'priceModifier == 1', 0),
-('CHEQUE', '((priceModifier >= 0.9) and (priceModifier <= 1.0))', 0);
+('BANK_TRANSFER', 'priceModifier == 1 and additionalItem.fieldsMap[''bankName''].stringValue matches ''[A-Za-z\s]+'' and additionalItem.fieldsMap[''bankAccount''].stringValue matches ''\d+''', 0),
+('CHEQUE', '((priceModifier >= 0.9) and (priceModifier <= 1.0)) and additionalItem.fieldsMap[''bankName''].stringValue matches ''[A-Za-z\s]+'' and additionalItem.fieldsMap[''chequeNumber''].stringValue matches ''\d+''', 0);
