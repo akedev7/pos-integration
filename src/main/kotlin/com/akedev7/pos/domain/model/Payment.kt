@@ -2,15 +2,15 @@ package com.akedev7.pos.domain.model
 
 
 import com.google.protobuf.Struct
-import com.google.protobuf.Timestamp
 import java.math.BigDecimal
+import java.time.OffsetDateTime
 
 data class Payment(
     val customerId: Long,
     val price: BigDecimal,
     val priceModifier: BigDecimal,
     val paymentMethod: String,
-    val datetime: Timestamp,
+    val datetime: OffsetDateTime,
     val additionalItem: Struct
 )
 

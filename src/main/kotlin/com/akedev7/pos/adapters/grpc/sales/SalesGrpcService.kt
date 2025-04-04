@@ -1,4 +1,4 @@
-package com.akedev7.pos.adapters.grpc
+package com.akedev7.pos.adapters.grpc.sales
 
 
 import com.akedev7.pos.application.service.SalesService

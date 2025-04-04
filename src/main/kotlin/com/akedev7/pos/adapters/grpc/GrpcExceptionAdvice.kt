@@ -1,5 +1,6 @@
 package com.akedev7.pos.adapters.grpc
 
+import com.akedev7.pos.adapters.grpc.payment.validation.PaymentValidationException
 import com.google.rpc.Code
 import com.google.rpc.ErrorInfo
 import com.google.rpc.Status as RpcStatus
@@ -32,7 +33,25 @@ class GlobalGrpcExceptionHandler {
         return StatusProto.toStatusRuntimeException(status)
     }
 
-        @GrpcExceptionHandler(Exception::class)
+    @GrpcExceptionHandler(PaymentValidationException::class)
+    fun handlePaymentValidation(ex: PaymentValidationException): StatusRuntimeException {
+        val errorMessage = ErrorResponse(error = ex.message ?: "Invalid input")
+
+        val errorInfo = ErrorInfo.newBuilder()
+            .setReason("INVALID_ARGUMENT")
+            .putMetadata("details", errorMessage.error)
+            .build()
+
+        val status = RpcStatus.newBuilder()
+            .setCode(Code.INVALID_ARGUMENT.number)
+            .setMessage("Invalid input")
+            .addDetails(Any.pack(errorInfo))
+            .build()
+
+        return StatusProto.toStatusRuntimeException(status)
+    }
+
+    @GrpcExceptionHandler(Exception::class)
     fun handleGeneric(ex: Exception): StatusRuntimeException {
         val errorMessage = ErrorResponse(error = "Unexpected server error: ${ex.message}")
 

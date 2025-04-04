@@ -1,7 +1,6 @@
 package com.akedev7.pos.adapters.postgres
 
 import com.akedev7.pos.application.utils.structToString
-import com.akedev7.pos.application.utils.toOffsetDateTime
 import com.akedev7.pos.domain.model.Payment
 import com.akedev7.pos.domain.port.IPaymentRepository
 import com.akedev7.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
@@ -18,7 +17,7 @@ class PaymentRepository(private val dsl: DSLContext) : IPaymentRepository {
             .set(CUSTOMER_PAYMENTS.PRICE, payment.price)
             .set(CUSTOMER_PAYMENTS.PRICE_MODIFIER, payment.priceModifier)
             .set(CUSTOMER_PAYMENTS.PAYMENT_METHOD, payment.paymentMethod)
-            .set(CUSTOMER_PAYMENTS.DATETIME, payment.datetime.toOffsetDateTime())
+            .set(CUSTOMER_PAYMENTS.DATETIME, payment.datetime)
             .set(CUSTOMER_PAYMENTS.METADATA, JSONB.valueOf(structToString(payment.additionalItem)))
             .execute()
     }

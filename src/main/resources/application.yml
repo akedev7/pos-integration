@@ -25,3 +25,6 @@ grpc:
     inProcess:
       address: in-process:pos-integration
       negotiation-type: PLAINTEXT
+
+payment:
+  max-price-modifier: 2

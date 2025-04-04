@@ -193,4 +193,21 @@ class PaymentGrpcServiceComponentTest() : BaseTest() {
         assertThat(errorInfo?.reason).isEqualTo("INVALID_ARGUMENT")
         assertThat(errorInfo?.metadataMap?.get("details")).contains("No matching rule found for your payment")
     }
+
+    @Test
+    fun `should return invalid argument error given invalid argument`(): Unit = runBlocking {
+        val ex = assertThrows<StatusException> {
+            grpcStub.processPayment(
+                PaymentRequest.newBuilder()
+                    .build()
+            )
+
+        }
+        assertThat(ex.status.code.name).isEqualTo("INVALID_ARGUMENT")
+
+        val status = StatusProto.fromThrowable(ex)
+        val errorInfo = status?.detailsList?.find { it.`is`(ErrorInfo::class.java) }?.unpack(com.google.rpc.ErrorInfo::class.java)
+        assertThat(errorInfo?.reason).isEqualTo("INVALID_ARGUMENT")
+        assertThat(errorInfo?.metadataMap?.get("details")).isEqualTo("{\"error\": [\"Customer ID cannot be blank\", \"Price must be specified\", \"Price modifier must be specified\", \"Payment method cannot be blank\", \"Datetime must be specified\"]}")
+    }
 }
