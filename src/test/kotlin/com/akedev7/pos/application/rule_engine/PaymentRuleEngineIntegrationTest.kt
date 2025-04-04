@@ -170,4 +170,71 @@ class PaymentRuleEngineIntegrationTest {
             paymentRuleEngine.getPaymentCalculationResult(payment)
         }
     }
+
+    @Test
+    fun `getPaymentCalculationResult should throw exception when payment rules are empty`() {
+        val payment = Payment(
+            customerId = 1L,
+            price = BigDecimal("100.00"),
+            priceModifier = BigDecimal("1.00"),
+            paymentMethod = "CREDIT_CARD",
+            datetime = OffsetDateTime.now(),
+            additionalItem = Struct.newBuilder().build()
+        )
+
+        every { mockRepository.getPaymentRule() } returns emptyMap()
+
+        assertThrows<IllegalArgumentException> {
+            paymentRuleEngine.getPaymentCalculationResult(payment)
+        }
+    }
+
+    @Test
+    fun `getPaymentCalculationResult should handle zero price correctly`() {
+        val paymentMethod = "CREDIT_CARD"
+        val payment = Payment(
+            customerId = 1L,
+            price = BigDecimal("0.00"),
+            priceModifier = BigDecimal("1.00"),
+            paymentMethod = paymentMethod,
+            datetime = OffsetDateTime.now(),
+            additionalItem = Struct.newBuilder().build()
+        )
+
+        val ruleForMethod = PaymentRule(
+            condition = "price >= 0", // Explicitly allow zero
+            pointModifier = BigDecimal("0.01")
+        )
+
+        every { mockRepository.getPaymentRule() } returns mapOf(paymentMethod to ruleForMethod)
+
+        val result = paymentRuleEngine.getPaymentCalculationResult(payment)
+        assertEquals(BigDecimal("0.0000"), result.finalPrice)
+        assertEquals(BigDecimal("0.0000"), result.calculatedPoints)
+    }
+
+    @Test
+    fun `getPaymentCalculationResult should handle exactly matching condition values`() {
+        val paymentMethod = "CREDIT_CARD"
+        val payment = Payment(
+            customerId = 1L,
+            price = BigDecimal("50.00"), // Exactly matches condition
+            priceModifier = BigDecimal("1.00"),
+            paymentMethod = paymentMethod,
+            datetime = OffsetDateTime.now(),
+            additionalItem = Struct.newBuilder().build()
+        )
+
+        val ruleForMethod = PaymentRule(
+            condition = "price >= 50", // Edge case condition
+            pointModifier = BigDecimal("0.02")
+        )
+
+        every { mockRepository.getPaymentRule() } returns mapOf(paymentMethod to ruleForMethod)
+
+        val result = paymentRuleEngine.getPaymentCalculationResult(payment)
+        assertEquals(BigDecimal("50.0000"), result.finalPrice)
+        assertEquals(BigDecimal("1.0000"), result.calculatedPoints)
+    }
+
 }
