@@ -9,6 +9,8 @@ import io.grpc.StatusRuntimeException
 import io.grpc.protobuf.StatusProto
 import net.devh.boot.grpc.server.advice.GrpcAdvice
 import net.devh.boot.grpc.server.advice.GrpcExceptionHandler
+import org.slf4j.LoggerFactory
+import java.util.logging.Logger
 
 @GrpcAdvice
 class GlobalGrpcExceptionHandler {
@@ -17,11 +19,10 @@ class GlobalGrpcExceptionHandler {
 
     @GrpcExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(ex: IllegalArgumentException): StatusRuntimeException {
-        val errorMessage = ErrorResponse(error = ex.message ?: "Invalid input")
-
+        log.error(ex.stackTrace.toString())
         val errorInfo = ErrorInfo.newBuilder()
             .setReason("INVALID_ARGUMENT")
-            .putMetadata("details", errorMessage.error)
+            .putMetadata("details", ex.message)
             .build()
 
         val status = RpcStatus.newBuilder()
@@ -35,11 +36,10 @@ class GlobalGrpcExceptionHandler {
 
     @GrpcExceptionHandler(PaymentValidationException::class)
     fun handlePaymentValidation(ex: PaymentValidationException): StatusRuntimeException {
-        val errorMessage = ErrorResponse(error = ex.message ?: "Invalid input")
-
+        log.error(ex.stackTrace.toString())
         val errorInfo = ErrorInfo.newBuilder()
             .setReason("INVALID_ARGUMENT")
-            .putMetadata("details", errorMessage.error)
+            .putMetadata("details", ex.message)
             .build()
 
         val status = RpcStatus.newBuilder()
@@ -53,6 +53,7 @@ class GlobalGrpcExceptionHandler {
 
     @GrpcExceptionHandler(Exception::class)
     fun handleGeneric(ex: Exception): StatusRuntimeException {
+        log.error(ex.stackTrace.toString())
         val errorMessage = ErrorResponse(error = "Unexpected server error: ${ex.message}")
 
         val errorInfo = ErrorInfo.newBuilder()
@@ -67,5 +68,8 @@ class GlobalGrpcExceptionHandler {
             .build()
 
         return StatusProto.toStatusRuntimeException(status)
+    }
+    companion object {
+        private val log = LoggerFactory.getLogger(GlobalGrpcExceptionHandler::class.java)
     }
 }

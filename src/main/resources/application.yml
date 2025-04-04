@@ -20,11 +20,6 @@ spring:
 grpc:
   server:
     port: 9090
-    in-process-name: pos-integration
-  client:
-    inProcess:
-      address: in-process:pos-integration
-      negotiation-type: PLAINTEXT
 
 payment:
   max-price-modifier: 2

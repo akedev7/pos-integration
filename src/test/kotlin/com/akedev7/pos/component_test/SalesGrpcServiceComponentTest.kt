@@ -1,12 +1,10 @@
 package com.akedev7.pos.component_test
 
 import com.akedev7.pos.controller.Payment.SalesDataRequest
-import com.akedev7.pos.controller.PaymentServiceGrpcKt
 import com.akedev7.pos.controller.SalesServiceGrpcKt
 import com.akedev7.tables.CustomerPayments.Companion.CUSTOMER_PAYMENTS
 import com.google.protobuf.Timestamp
 import com.google.type.Decimal
-import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.runBlocking
 import net.devh.boot.grpc.client.inject.GrpcClient
 import org.assertj.core.api.Assertions.assertThat
@@ -24,7 +22,7 @@ import kotlin.test.Test
 
 @SpringBootTest
 @DirtiesContext
-class SalesGrpcServiceComponentTest : BaseTest() {
+class SalesGrpcServiceComponentTest : ComponentTestBase() {
 
     @Autowired
     lateinit var dsl: DSLContext
