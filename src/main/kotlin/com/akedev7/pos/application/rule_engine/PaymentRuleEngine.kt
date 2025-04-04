@@ -1,37 +1,20 @@
 package com.akedev7.pos.application.rule_engine
 
 import com.akedev7.pos.application.rule_engine.model.PaymentCalculationResult
+import com.akedev7.pos.application.rule_engine.model.PaymentRule
 import com.akedev7.pos.domain.model.Payment
-import com.akedev7.tables.PaymentRule.Companion.PAYMENT_RULE
-import org.jooq.DSLContext
-import org.springframework.expression.ExpressionParser
-import org.springframework.expression.spel.standard.SpelExpressionParser
+import org.slf4j.LoggerFactory
 import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.stereotype.Component
-import java.math.BigDecimal
 
 @Component
-class PaymentRuleEngine(ctx: DSLContext) {
-    data class PaymentRuleDTO(
-        val condition: String,
-        val pointModifier: BigDecimal
-    )
-
-    private final val parser: ExpressionParser = SpelExpressionParser()
-    private final val paymentRule: Map<String, PaymentRuleDTO>
-
-    init {
-        val rules = ctx.selectFrom(PAYMENT_RULE).fetch()
-        paymentRule = rules.map { rule ->
-            rule.paymentMethod!! to
-                    PaymentRuleDTO(
-                        rule.conditions!!, rule.pointsPercentage ?: BigDecimal.ONE
-                    )
-        }.toMap()
+class PaymentRuleEngine(val ruleParser: SpelRuleParser, val paymentRuleRepository: PaymentRuleRepository) {
+    companion object {
+        private val log = LoggerFactory.getLogger(PaymentRuleEngine::class.java)
     }
-
     fun getPaymentCalculationResult(payment: Payment): PaymentCalculationResult {
-        if (isRuleMatched(payment)) {
+        val paymentRule = paymentRuleRepository.getPaymentRule()
+        if (isRuleMatched(payment, paymentRule)) {
             val point = payment.price.multiply(paymentRule[payment.paymentMethod]?.pointModifier)
             val price = payment.price.multiply(payment.priceModifier)
             return PaymentCalculationResult(price, point)
@@ -39,8 +22,14 @@ class PaymentRuleEngine(ctx: DSLContext) {
         throw IllegalArgumentException("No matching rule found for your payment")
     }
 
-    private fun isRuleMatched(payment: Payment): Boolean =
-        parser.parseExpression(paymentRule[payment.paymentMethod]!!.condition)
-            .getValue(StandardEvaluationContext(payment), Boolean::class.java) ?: false
+    private fun isRuleMatched(payment: Payment, paymentRule: Map<String, PaymentRule>): Boolean {
+        val condition = paymentRule[payment.paymentMethod]?.condition
+        return try {
+            ruleParser.parse(condition!!, StandardEvaluationContext(payment))
+        } catch (ex: Exception) {
+            log.error("Error when parsing payment rule $condition", ex)
+            false
+        }
+    }
 }
 
