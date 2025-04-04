@@ -33,10 +33,10 @@ class PaymentGrpcService(
             PaymentRequestValidator.ValidationResult.Valid -> {
                 return com.akedev7.pos.domain.model.Payment(
                     customerId = this.customerId.toLong(),
-                    price = requireNotNull(this.price.toBigDecimal()),
-                    priceModifier = requireNotNull(this.priceModifier.toBigDecimal()),
+                    price = this.price.toBigDecimal(),
+                    priceModifier = this.priceModifier.toBigDecimal(),
                     paymentMethod = this.paymentMethod,
-                    datetime = requireNotNull(this.datetime.toOffsetDateTime()),
+                    datetime = this.datetime.toOffsetDateTime(),
                     additionalItem = this.additionalItem
                 )
             }

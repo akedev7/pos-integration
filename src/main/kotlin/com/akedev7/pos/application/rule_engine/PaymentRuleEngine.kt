@@ -3,15 +3,12 @@ package com.akedev7.pos.application.rule_engine
 import com.akedev7.pos.application.rule_engine.model.PaymentCalculationResult
 import com.akedev7.pos.application.rule_engine.model.PaymentRule
 import com.akedev7.pos.domain.model.Payment
-import org.slf4j.LoggerFactory
 import org.springframework.expression.spel.support.StandardEvaluationContext
 import org.springframework.stereotype.Component
 
 @Component
 class PaymentRuleEngine(val ruleParser: SpelRuleParser, val paymentRuleRepository: PaymentRuleRepository) {
-    companion object {
-        private val log = LoggerFactory.getLogger(PaymentRuleEngine::class.java)
-    }
+
     fun getPaymentCalculationResult(payment: Payment): PaymentCalculationResult {
         val paymentRule = paymentRuleRepository.getPaymentRule()
         if (isRuleMatched(payment, paymentRule)) {
@@ -24,12 +21,8 @@ class PaymentRuleEngine(val ruleParser: SpelRuleParser, val paymentRuleRepositor
 
     private fun isRuleMatched(payment: Payment, paymentRule: Map<String, PaymentRule>): Boolean {
         val condition = paymentRule[payment.paymentMethod]?.condition
-        return try {
-            ruleParser.parse(condition!!, StandardEvaluationContext(payment))
-        } catch (ex: Exception) {
-            log.error("Error when parsing payment rule $condition", ex)
-            false
-        }
+            ?: throw IllegalArgumentException("The payment method ${payment.paymentMethod} is not supported")
+        return ruleParser.parse(condition, StandardEvaluationContext(payment))
     }
 }
 
