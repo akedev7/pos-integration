@@ -1,43 +1,25 @@
 package com.akedev7.pos.adapters.postgres
 
+import com.akedev7.pos.adapters.postgres.jooq.tables.references.CUSTOMER_PAYMENTS
 import com.akedev7.pos.domain.model.Sale
-import com.akedev7.pos.domain.model.SalesSummary
 import com.akedev7.pos.domain.port.ISalesRepository
 import org.jooq.DSLContext
 import org.jooq.DatePart
-import org.jooq.Record3
-import org.jooq.Result
 import org.jooq.impl.DSL
 import org.springframework.stereotype.Repository
-import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 @Repository
 class SalesRepository(private val dsl: DSLContext) : ISalesRepository {
-
-    override fun getSales(startDateTime: OffsetDateTime, endDateTime: OffsetDateTime): SalesSummary {
-        val pointsExpression = DSL.floor(
-            DSL.sum(DSL.field("price", BigDecimal::class.java))
-                .cast(Int::class.java)
-        )
+    override fun getSales(startDateTime: OffsetDateTime, endDateTime: OffsetDateTime): List<Sale> {
         return dsl.select(
-            DSL.trunc(DSL.field("datetime", OffsetDateTime::class.java), DatePart.HOUR).`as`("hour"),
-            DSL.sum(DSL.field("price", BigDecimal::class.java)).`as`("total_sales"),
-            pointsExpression.`as`("total_points")
+            DSL.trunc(CUSTOMER_PAYMENTS.DATETIME, DatePart.HOUR).`as`(CUSTOMER_PAYMENTS.DATETIME),
+            DSL.sum(CUSTOMER_PAYMENTS.PRICE),
+            DSL.sum(CUSTOMER_PAYMENTS.POINT)
         )
-            .from(DSL.table("customer_payments"))
-            .where(
-                DSL.field("datetime", OffsetDateTime::class.java).between(
-                    startDateTime,
-                    endDateTime
-                )
-            )
-            .groupBy(DSL.trunc(DSL.field("datetime", OffsetDateTime::class.java), DatePart.HOUR))
-            .orderBy(DSL.field("hour"))
-            .fetch().toSalesSummary()
+            .from(CUSTOMER_PAYMENTS)
+            .where(CUSTOMER_PAYMENTS.DATETIME.between(startDateTime, endDateTime))
+            .groupBy(DSL.trunc(CUSTOMER_PAYMENTS.DATETIME, DatePart.HOUR))
+            .fetch { Sale(it.value1()!!, it.value2()!!, it.value3()!!) }
     }
-
-    fun Result<Record3<OffsetDateTime, BigDecimal, Int>>.toSalesSummary() =
-        SalesSummary(this.map { Sale(it.value1(), it.value2(), it.value3()) })
-
 }

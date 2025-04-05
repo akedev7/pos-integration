@@ -22,8 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 
-
-class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
+class PaymentGrpcServiceComponentTest : ComponentTestBase() {
 
     @Autowired
     lateinit var dsl: DSLContext

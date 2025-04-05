@@ -10,5 +10,5 @@ data class SalesSummary(
 data class Sale(
     val datetime: OffsetDateTime,
     val sales: BigDecimal,
-    val points: Int
+    val points: BigDecimal
 )
