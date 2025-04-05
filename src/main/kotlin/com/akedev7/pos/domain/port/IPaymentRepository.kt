@@ -1,7 +1,7 @@
 package com.akedev7.pos.domain.port
 
-import com.akedev7.pos.domain.model.Payment
+import com.akedev7.pos.domain.model.PaymentDAO
 
 interface IPaymentRepository {
-    fun save(payment: Payment)
+    fun save(payment: PaymentDAO)
 }

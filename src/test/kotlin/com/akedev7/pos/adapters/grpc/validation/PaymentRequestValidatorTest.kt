@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
-import java.math.BigDecimal
 import java.time.Instant
 
 @ExtendWith(MockitoExtension::class)
@@ -21,7 +20,7 @@ class PaymentRequestValidatorTest {
 
     @BeforeEach
     fun beforeEach() {
-        validator = PaymentRequestValidator(BigDecimal("1.5"))
+        validator = PaymentRequestValidator()
     }
 
     @Test
@@ -94,16 +93,6 @@ class PaymentRequestValidatorTest {
     }
 
     @Test
-    fun `validate returns Invalid when priceModifier exceeds maximum`() {
-        val tooHighModifier = BigDecimal("1.5") + BigDecimal.ONE
-        val request = createValidPaymentRequest().toBuilder()
-            .setPriceModifier(Decimal.newBuilder().setValue(tooHighModifier.toString()).build())
-            .build()
-        val result = validator.validate(request)
-        assertValidationError(result, "Price modifier cannot be greater than ${BigDecimal("1.5")}")
-    }
-
-    @Test
     fun `validate returns Invalid when paymentMethod is blank`() {
         val request = createValidPaymentRequest().toBuilder().setPaymentMethod(" ").build()
         val result = validator.validate(request)
@@ -173,9 +162,4 @@ class PaymentRequestValidatorTest {
         val errors = (result as PaymentRequestValidator.ValidationResult.Invalid).errors
         assertTrue(errors.contains(expectedError), "Expected error '$expectedError' not found in $errors")
     }
-}
-
-// Mock configuration class
-class PaymentProperties {
-    val maxPriceModifier: BigDecimal = BigDecimal("1.5")
 }

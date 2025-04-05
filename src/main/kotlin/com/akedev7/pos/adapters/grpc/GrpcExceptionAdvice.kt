@@ -14,12 +14,12 @@ import com.google.rpc.Status as RpcStatus
 @GrpcAdvice
 class GlobalGrpcExceptionHandler {
     companion object {
-        private val log = LoggerFactory.getLogger(GlobalGrpcExceptionHandler::class.java)
+        private val log = LoggerFactory.getLogger(this::class.java)
     }
 
     @GrpcExceptionHandler(IllegalArgumentException::class)
     fun handleIllegalArgument(ex: IllegalArgumentException): StatusRuntimeException {
-        log.error(ex.stackTrace.toString())
+        log.debug("Illegal Argument", ex)
         val errorInfo = ErrorInfo.newBuilder()
             .setReason("INVALID_ARGUMENT")
             .putMetadata("details", ex.message)
@@ -36,7 +36,7 @@ class GlobalGrpcExceptionHandler {
 
     @GrpcExceptionHandler(PaymentValidationException::class)
     fun handlePaymentValidation(ex: PaymentValidationException): StatusRuntimeException {
-        log.error(ex.stackTrace.toString())
+        log.debug("Validation Error", ex)
         val errorInfo = ErrorInfo.newBuilder()
             .setReason("INVALID_ARGUMENT")
             .putMetadata("details", ex.message)
@@ -53,7 +53,7 @@ class GlobalGrpcExceptionHandler {
 
     @GrpcExceptionHandler(Exception::class)
     fun handleGeneric(ex: Exception): StatusRuntimeException {
-        log.error(ex.stackTrace.toString())
+        log.error("Generic Error", ex)
         val errorInfo = ErrorInfo.newBuilder()
             .setReason("INTERNAL")
             .putMetadata("details", ex.message)

@@ -1,14 +1,11 @@
 package com.akedev7.pos.adapters.grpc.payment.validation
 
 import com.akedev7.pos.adapters.grpc.protobuf.Payment
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.math.BigDecimal
 
 @Component
-class PaymentRequestValidator(
-    @Value("\${payment.max-price-modifier}") private val maxPriceModifier: BigDecimal
-) {
+class PaymentRequestValidator {
     fun validate(request: Payment.PaymentRequest): ValidationResult {
         val errors = mutableListOf<String>()
 
@@ -28,8 +25,6 @@ class PaymentRequestValidator(
             errors.add("Price modifier must be specified")
         } else if (request.priceModifier.value.toBigDecimal() <= BigDecimal.ZERO) {
             errors.add("Price modifier must be positive")
-        } else if (request.priceModifier.value.toBigDecimal() > maxPriceModifier) {
-            errors.add("Price modifier cannot be greater than $maxPriceModifier")
         }
 
         if (request.paymentMethod.isBlank()) {

@@ -23,26 +23,21 @@ class SalesGrpcService(private val salesService: SalesService) : SalesServiceGrp
     }
 
     fun getGrpcResponse(salesSummary: SalesSummary): Payment.SalesDataResponse {
-        val builder = Payment.SalesDataResponse.newBuilder()
-
-        salesSummary.sales.forEach { record ->
-            val salesRecord = Payment.SalesRecord.newBuilder().apply {
-                datetime = record.datetime.toProtoTimestamp()
-                sales = Decimal.newBuilder()
-                    .setValue(record.sales.toPlainString())
-                    .build()
-                points = record.points
-            }.build()
-            builder.addSales(salesRecord)
+        val sales = salesSummary.sales.map {
+            Payment.SalesRecord.newBuilder()
+                .setDatetime(it.datetime.toProtoTimestamp())
+                .setSales(Decimal.newBuilder().setValue(it.sales.toPlainString()).build())
+                .setPoints(Decimal.newBuilder().setValue(it.points.toPlainString()).build())
+                .build()
         }
-        return builder.build()
+        return Payment.SalesDataResponse.newBuilder().addAllSales(sales).build()
     }
 
     fun OffsetDateTime.toProtoTimestamp(): Timestamp {
         val instant: Instant = this.toInstant()
         return Timestamp.newBuilder()
-            .setSeconds(instant.epochSecond)  // Seconds since Unix epoch
-            .setNanos(instant.nano)           // Nanoseconds adjustment
+            .setSeconds(instant.epochSecond)
+            .setNanos(instant.nano)
             .build()
     }
 }

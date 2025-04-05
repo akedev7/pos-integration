@@ -1,8 +1,8 @@
 spring:
   application:
     name: pos
-  datasource:  # Required for Flyway
-    url: jdbc:postgresql://localhost:5432/appdb
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/appdb}
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver
@@ -20,6 +20,3 @@ spring:
 grpc:
   server:
     port: 9090
-
-payment:
-  max-price-modifier: 2

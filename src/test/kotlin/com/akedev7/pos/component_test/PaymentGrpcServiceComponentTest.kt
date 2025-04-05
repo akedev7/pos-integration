@@ -19,11 +19,11 @@ import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
+import java.math.BigDecimal
 import java.util.stream.Stream
 import kotlin.test.assertEquals
 
-
-class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
+class PaymentGrpcServiceComponentTest : ComponentTestBase() {
 
     @Autowired
     lateinit var dsl: DSLContext
@@ -33,95 +33,96 @@ class PaymentGrpcServiceComponentTest() : ComponentTestBase() {
 
     companion object {
         @JvmStatic
-        fun paymentMethodProvider(): Stream<PaymentTestData> = Stream.of(
-            PaymentTestData(
-                paymentMethod = "MASTERCARD",
-                priceModifier = "1",
-                additionalFields = mapOf("last4" to "1234"),
-                expectedPoints = 3,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "VISA",
-                priceModifier = "1",
-                additionalFields = mapOf("last4" to "5678"),
-                expectedPoints = 3,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "AMEX",
-                priceModifier = "1",
-                additionalFields = mapOf("last4" to "9012"),
-                expectedPoints = 2,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "JCB",
-                priceModifier = "1",
-                additionalFields = mapOf("last4" to "3456"),
-                expectedPoints = 5,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "LINE_PAY",
-                priceModifier = "1",
-                expectedPoints = 1,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "PAYPAY",
-                priceModifier = "1",
-                expectedPoints = 1,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "GRAB_PAY",
-                priceModifier = "1",
-                expectedPoints = 1,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "CASH",
-                priceModifier = "1",
-                expectedPoints = 5,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "CHEQUE",
-                priceModifier = "1",
-                additionalFields = mapOf("bankName" to "Bangkok", "chequeNumber" to "123456"),
-                expectedPoints = 0,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "BANK_TRANSFER",
-                priceModifier = "1",
-                additionalFields = mapOf("bankName" to "Bangkok", "bankAccount" to "123456"),
-                expectedPoints = 0,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "POINTS",
-                priceModifier = "1",
-                expectedPoints = 0,
-                expectedFinalPrice = 100.0
-            ),
-            PaymentTestData(
-                paymentMethod = "CASH_ON_DELIVERY",
-                priceModifier = "1",
-                additionalFields = mapOf("courier" to "YAMATO"),
-                expectedPoints = 3,
-                expectedFinalPrice = 100.0
+        fun paymentMethodProvider(): Stream<PaymentTestData> =
+            Stream.of(
+                PaymentTestData(
+                    paymentMethod = "MASTERCARD",
+                    priceModifier = "1",
+                    additionalFields = mapOf("last4" to "1234"),
+                    expectedPoints = Decimal.newBuilder().setValue("3.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "VISA",
+                    priceModifier = "1",
+                    additionalFields = mapOf("last4" to "5678"),
+                    expectedPoints = Decimal.newBuilder().setValue("3.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "AMEX",
+                    priceModifier = "1",
+                    additionalFields = mapOf("last4" to "9012"),
+                    expectedPoints = Decimal.newBuilder().setValue("2.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "JCB",
+                    priceModifier = "1",
+                    additionalFields = mapOf("last4" to "3456"),
+                    expectedPoints = Decimal.newBuilder().setValue("5.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "LINE_PAY",
+                    priceModifier = "1",
+                    expectedPoints = Decimal.newBuilder().setValue("1.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "PAYPAY",
+                    priceModifier = "1",
+                    expectedPoints = Decimal.newBuilder().setValue("1.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "GRAB_PAY",
+                    priceModifier = "1",
+                    expectedPoints = Decimal.newBuilder().setValue("1.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "CASH",
+                    priceModifier = "1",
+                    expectedPoints = Decimal.newBuilder().setValue("5.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "CHEQUE",
+                    priceModifier = "1",
+                    additionalFields = mapOf("bankName" to "Bangkok", "chequeNumber" to "123456"),
+                    expectedPoints = Decimal.newBuilder().setValue("0.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "BANK_TRANSFER",
+                    priceModifier = "1",
+                    additionalFields = mapOf("bankName" to "Bangkok", "bankAccount" to "123456"),
+                    expectedPoints = Decimal.newBuilder().setValue("0.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "POINTS",
+                    priceModifier = "1",
+                    expectedPoints = Decimal.newBuilder().setValue("0.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                ),
+                PaymentTestData(
+                    paymentMethod = "CASH_ON_DELIVERY",
+                    priceModifier = "1",
+                    additionalFields = mapOf("courier" to "YAMATO"),
+                    expectedPoints = Decimal.newBuilder().setValue("3.0000").build(),
+                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                )
             )
-        )
     }
 
     data class PaymentTestData(
         val paymentMethod: String,
         val priceModifier: String,
         val additionalFields: Map<String, String> = emptyMap(),
-        val expectedPoints: Int,
-        val expectedFinalPrice: Double
+        val expectedPoints: Decimal ,
+        val expectedFinalPrice: Decimal
     )
 
     @ParameterizedTest

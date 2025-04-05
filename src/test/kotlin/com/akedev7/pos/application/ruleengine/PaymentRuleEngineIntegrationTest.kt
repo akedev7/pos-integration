@@ -1,8 +1,12 @@
-import com.akedev7.pos.application.rule_engine.PaymentRuleEngine
-import com.akedev7.pos.application.rule_engine.PaymentRuleRepository
-import com.akedev7.pos.application.rule_engine.SpelRuleParser
-import com.akedev7.pos.application.rule_engine.model.PaymentRule
+package com.akedev7.pos.application.ruleengine
+
+import com.akedev7.pos.application.ruleengine.model.PaymentRule
 import com.akedev7.pos.domain.model.Payment
+import com.fasterxml.jackson.core.TreeNode
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.TextNode
+import com.fasterxml.jackson.databind.node.ValueNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.google.protobuf.Struct
 import io.mockk.every
 import io.mockk.mockk
@@ -28,15 +32,15 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("0.95"), // 5% discount
             paymentMethod = paymentMethod,
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         val ruleForMethod = PaymentRule(
-            condition = "price > 50 && paymentMethod == 'CREDIT_CARD'",
+            condition = "price > 50",
             pointModifier = BigDecimal("0.02") // 2% points
         )
 
-        val paymentRules = mapOf(
+        val paymentRules: Map<String?, PaymentRule?> = mapOf(
             paymentMethod to ruleForMethod,
             "DEBIT_CARD" to PaymentRule("price > 10", BigDecimal("0.01"))
         )
@@ -52,6 +56,34 @@ class PaymentRuleEngineIntegrationTest {
     }
 
     @Test
+    fun `getPaymentCalculationResult should throw exception when payment found but condition is null`() {
+        // Given
+        val payment = Payment(
+            customerId = 1L,
+            price = BigDecimal("100.00"),
+            priceModifier = BigDecimal("0.95"), // 5% discount
+            paymentMethod = "CREDIT_CARD",
+            datetime = OffsetDateTime.now(),
+            additionalItem = jacksonObjectMapper().createObjectNode()
+        )
+
+        val paymentRules: Map<String?, PaymentRule?> = mapOf(
+            "CREDIT_CARD" to PaymentRule(
+                condition = null,
+                pointModifier = BigDecimal("0.02")
+            ),
+            "DEBIT_CARD" to PaymentRule("price > 10", BigDecimal("0.01"))
+        )
+
+        every { mockRepository.getPaymentRule() } returns paymentRules
+
+        // When
+        assertThrows<IllegalArgumentException> {
+            paymentRuleEngine.getPaymentCalculationResult(payment)
+        }
+    }
+
+    @Test
     fun `getPaymentCalculationResult should throw exception when no matching rule found`() {
         // Given
         val payment = Payment(
@@ -60,10 +92,10 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("1.00"),
             paymentMethod = "UNSUPPORTED_METHOD",
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
-        val paymentRules = mapOf(
+        val paymentRules: Map<String?, PaymentRule?> = mapOf(
             "CREDIT_CARD" to PaymentRule("price > 50", BigDecimal("0.02")),
             "DEBIT_CARD" to PaymentRule("price > 10", BigDecimal("0.01"))
         )
@@ -86,7 +118,7 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("0.95"),
             paymentMethod = paymentMethod,
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         val ruleForMethod = PaymentRule(
@@ -94,7 +126,7 @@ class PaymentRuleEngineIntegrationTest {
             pointModifier = BigDecimal("0.02")
         )
 
-        val paymentRules = mapOf(
+        val paymentRules: Map<String?, PaymentRule?> = mapOf(
             paymentMethod to ruleForMethod,
             "DEBIT_CARD" to PaymentRule("price > 10", BigDecimal("0.01"))
         )
@@ -117,19 +149,18 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("0.90"), // 10% discount
             paymentMethod = paymentMethod,
             datetime = OffsetDateTime.parse("2023-01-15T12:00:00Z"),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         val ruleForMethod = PaymentRule(
             condition = """
-                price > 100 && 
-                (paymentMethod == 'MOBILE_PAY' || paymentMethod == 'E_WALLET') && 
+                price > 100 &&  
                 datetime.getHour() >= 10 && datetime.getHour() <= 14
             """.trimIndent(),
             pointModifier = BigDecimal("0.05") // 5% points during promotion hours
         )
 
-        val paymentRules = mapOf(
+        val paymentRules: Map<String?, PaymentRule?> = mapOf(
             paymentMethod to ruleForMethod,
             "CREDIT_CARD" to PaymentRule("price > 50", BigDecimal("0.02"))
         )
@@ -154,7 +185,7 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("1.00"),
             paymentMethod = paymentMethod,
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         val invalidRule = PaymentRule(
@@ -162,7 +193,7 @@ class PaymentRuleEngineIntegrationTest {
             pointModifier = BigDecimal("0.01")
         )
 
-        val paymentRules = mapOf(paymentMethod to invalidRule)
+        val paymentRules: Map<String?, PaymentRule?> = mapOf(paymentMethod to invalidRule)
         every { mockRepository.getPaymentRule() } returns paymentRules
 
         // When / Then
@@ -179,7 +210,7 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("1.00"),
             paymentMethod = "CREDIT_CARD",
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         every { mockRepository.getPaymentRule() } returns emptyMap()
@@ -198,7 +229,7 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("1.00"),
             paymentMethod = paymentMethod,
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         val ruleForMethod = PaymentRule(
@@ -222,7 +253,7 @@ class PaymentRuleEngineIntegrationTest {
             priceModifier = BigDecimal("1.00"),
             paymentMethod = paymentMethod,
             datetime = OffsetDateTime.now(),
-            additionalItem = Struct.newBuilder().build()
+            additionalItem = jacksonObjectMapper().createObjectNode()
         )
 
         val ruleForMethod = PaymentRule(

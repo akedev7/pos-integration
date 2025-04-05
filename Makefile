@@ -1,31 +1,28 @@
 # Makefile for POS application
-.PHONY: local migrate build run test clean
+.PHONY: local migrate build verify clean all
 
-# Variables
-APP_NAME := pos
-VERSION := 0.0.1-SNAPSHOT
+all: postgres migrate build app
+	echo "Everything is ready"
 
-# Startup Postgres
-local:
-	@echo Starting docker compose
-	docker-compose -f docker-compose.yml up -d --build
+postgres:
+	@echo Starting Postgres
+	docker-compose -f docker-compose-postgres.yml up -d --build
 
-# Database migration
 migrate:
 	@echo "Running database migrations..."
 	./mvnw flyway:migrate
 
-# Build the application
 build:
-	@echo "Building the application..."
+	@echo "Building POS integration package..."
 	./mvnw clean package -DskipTests
 
-# Run the application locally
-run: build
-	@echo "Starting the application..."
-	java -jar target/${APP_NAME}-${VERSION}.jar
+app:
+	@echo Starting POS app
+	docker-compose -f docker-compose.yml up -d --build
 
-# Run tests
+verify:
+	./mvnw verify
+
 test:
 	@echo "Running tests..."
 	./mvnw test
@@ -35,3 +32,10 @@ clean:
 	@echo "Cleaning up..."
 	./mvnw clean
 	rm -rf target
+
+stop:
+	@echo "Stopping containers..."
+	docker-compose -f docker-compose.yml down
+	docker-compose -f docker-compose-postgres.yml down
+
+rebuild: clean build app

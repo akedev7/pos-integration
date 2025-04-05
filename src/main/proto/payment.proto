@@ -15,22 +15,22 @@ service SalesService {
 }
 
 message PaymentRequest {
-    string customerId = 1;
+    string customer_id = 1;
     google.type.Decimal price = 2;
-    google.type.Decimal priceModifier = 3;
-    string paymentMethod = 4;
+    google.type.Decimal price_modifier = 3;
+    string payment_method = 4;
     google.protobuf.Timestamp datetime = 5;
-    google.protobuf.Struct additionalItem = 6;
+    google.protobuf.Struct additional_item = 6;
 }
 
 message PaymentResponse {
-    double finalPrice = 1;
-    int32 points = 2;
+    google.type.Decimal final_price = 1;
+    google.type.Decimal points = 2;
 }
 
 message SalesDataRequest {
-    google.protobuf.Timestamp startDateTime = 1;
-    google.protobuf.Timestamp endDateTime = 2;
+    google.protobuf.Timestamp start_date_time = 1;
+    google.protobuf.Timestamp end_date_time = 2;
 }
 
 message SalesDataResponse {
@@ -40,5 +40,5 @@ message SalesDataResponse {
 message SalesRecord {
     google.protobuf.Timestamp datetime = 1;
     google.type.Decimal sales = 2;
-    int32 points = 3;
+    google.type.Decimal points = 3;
 }

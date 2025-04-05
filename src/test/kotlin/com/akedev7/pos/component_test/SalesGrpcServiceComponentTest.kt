@@ -20,8 +20,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.Test
 
 
-@SpringBootTest
-@DirtiesContext
 class SalesGrpcServiceComponentTest : ComponentTestBase() {
 
     @Autowired
@@ -38,20 +36,57 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
         val baseTime = LocalDateTime.of(2023, 1, 1, 10, 0) // 10:00 AM
 
         // Hour 1 - 3 payments (2 from customer 1, 1 from customer 2)
-        insertPayment(1, BigDecimal("100.00"), BigDecimal("1.00"), "CREDIT_CARD", baseTime)
-        insertPayment(1, BigDecimal("50.00"), BigDecimal("0.50"), "PAYPAL", baseTime.plusMinutes(15))
-        insertPayment(2, BigDecimal("75.00"), BigDecimal("0.75"), "CREDIT_CARD", baseTime.plusMinutes(30))
+        insertPayment(1, BigDecimal("100.00"), BigDecimal("100.00"), BigDecimal("1.00"), "CREDIT_CARD", baseTime)
+        insertPayment(
+            1,
+            BigDecimal("50.00"),
+            BigDecimal("100.00"),
+            BigDecimal("0.50"),
+            "PAYPAL",
+            baseTime.plusMinutes(15)
+        )
+        insertPayment(
+            2,
+            BigDecimal("75.00"),
+            BigDecimal("100.00"),
+            BigDecimal("0.75"),
+            "CREDIT_CARD",
+            baseTime.plusMinutes(30)
+        )
 
         // Hour 2 - 2 payments (1 from customer 3, 1 from customer 1)
-        insertPayment(3, BigDecimal("200.00"), BigDecimal("2.00"), "DEBIT_CARD", baseTime.plusHours(1))
-        insertPayment(1, BigDecimal("30.00"), BigDecimal("0.30"), "CREDIT_CARD", baseTime.plusHours(1).plusMinutes(45))
+        insertPayment(
+            3,
+            BigDecimal("200.00"),
+            BigDecimal("100.00"),
+            BigDecimal("2.00"),
+            "DEBIT_CARD",
+            baseTime.plusHours(1)
+        )
+        insertPayment(
+            1,
+            BigDecimal("30.00"),
+            BigDecimal("100.00"),
+            BigDecimal("0.30"),
+            "CREDIT_CARD",
+            baseTime.plusHours(1).plusMinutes(45)
+        )
 
         // Hour 3 - 1 payment from customer 4
-        insertPayment(4, BigDecimal("150.00"), BigDecimal("1.50"), "PAYPAL", baseTime.plusHours(2))
+        insertPayment(
+            4,
+            BigDecimal("150.00"),
+            BigDecimal("100.00"),
+            BigDecimal("1.50"),
+            "PAYPAL",
+            baseTime.plusHours(2)
+        )
     }
+
     private fun insertPayment(
         customerId: Long,
         price: BigDecimal,
+        point: BigDecimal,
         priceModifier: BigDecimal,
         paymentMethod: String,
         datetime: LocalDateTime
@@ -60,6 +95,7 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
             .columns(
                 CUSTOMER_PAYMENTS.CUSTOMER_ID,
                 CUSTOMER_PAYMENTS.PRICE,
+                CUSTOMER_PAYMENTS.POINT,
                 CUSTOMER_PAYMENTS.PRICE_MODIFIER,
                 CUSTOMER_PAYMENTS.PAYMENT_METHOD,
                 CUSTOMER_PAYMENTS.DATETIME
@@ -67,6 +103,7 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
             .values(
                 customerId,
                 price,
+                point,
                 priceModifier,
                 paymentMethod,
                 datetime.toInstant(ZoneOffset.UTC).atOffset(ZoneOffset.UTC)
@@ -101,7 +138,9 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
                 .toProtoTimestamp()
         )
         assertThat(hour1.sales).isEqualTo(Decimal.newBuilder().setValue("225.00").build()) // 100 + 50 + 75
-        assertThat(hour1.points).isEqualTo(225) // Assuming 1 point per 1 currency unit
+        assertThat(hour1.points).isEqualTo(
+            Decimal.newBuilder().setValue("300.00").build()
+        ) // Assuming 1 point per 1 currency unit
 
         // Verify hour 2 (11:00-12:00)
         val hour2 = response.salesList[1]
@@ -111,7 +150,7 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
                 .toProtoTimestamp()
         )
         assertThat(hour2.sales).isEqualTo(Decimal.newBuilder().setValue("230.00").build()) // 200 + 30
-        assertThat(hour2.points).isEqualTo(230)
+        assertThat(hour2.points).isEqualTo(Decimal.newBuilder().setValue("200.00").build())
 
         // Verify hour 3 (12:00-13:00)
         val hour3 = response.salesList[2]
@@ -121,7 +160,7 @@ class SalesGrpcServiceComponentTest : ComponentTestBase() {
                 .toProtoTimestamp()
         )
         assertThat(hour3.sales).isEqualTo(Decimal.newBuilder().setValue("150.00").build())
-        assertThat(hour3.points).isEqualTo(150)
+        assertThat(hour3.points).isEqualTo(Decimal.newBuilder().setValue("100.00").build())
 
     }
 

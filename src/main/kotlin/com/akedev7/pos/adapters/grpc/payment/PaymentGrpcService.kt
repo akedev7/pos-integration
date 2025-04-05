@@ -6,21 +6,29 @@ import com.akedev7.pos.adapters.grpc.payment.validation.PaymentValidationExcepti
 import com.akedev7.pos.adapters.grpc.protobuf.Payment
 import com.akedev7.pos.adapters.grpc.protobuf.PaymentServiceGrpcKt
 import com.akedev7.pos.application.service.PaymentService
-import com.akedev7.pos.application.utils.toBigDecimal
 import com.akedev7.pos.application.utils.toOffsetDateTime
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.google.protobuf.util.JsonFormat
+import com.google.type.Decimal
 import net.devh.boot.grpc.server.service.GrpcService
+import java.math.BigDecimal
 
 @GrpcService
 class PaymentGrpcService(
     private val validator: PaymentRequestValidator,
     private val paymentService: PaymentService
 ) : PaymentServiceGrpcKt.PaymentServiceCoroutineImplBase() {
+
+    companion object {
+        val objectMapper = jacksonObjectMapper()
+    }
+
     override suspend fun processPayment(request: Payment.PaymentRequest): Payment.PaymentResponse {
         val payment = request.toDomainObject()
         val paymentResult = paymentService.getPaymentResult(payment)
         return Payment.PaymentResponse.newBuilder()
-            .setFinalPrice(paymentResult.finalPrice.toDouble())
-            .setPoints(paymentResult.point.toInt())
+            .setFinalPrice(paymentResult.finalPrice.toProtoDecimal())
+            .setPoints(paymentResult.point.toProtoDecimal())
             .build()
     }
 
@@ -37,9 +45,22 @@ class PaymentGrpcService(
                     priceModifier = this.priceModifier.toBigDecimal(),
                     paymentMethod = this.paymentMethod,
                     datetime = this.datetime.toOffsetDateTime(),
-                    additionalItem = this.additionalItem
+                    additionalItem = objectMapper.readTree(
+                        JsonFormat.printer().print(this.additionalItem)
+                    )
                 )
+
             }
         }
+    }
+
+    fun BigDecimal.toProtoDecimal(): Decimal {
+        return Decimal.newBuilder()
+            .setValue(this.toPlainString())
+            .build()
+    }
+
+    private fun Decimal.toBigDecimal(): BigDecimal {
+        return BigDecimal(this.value)
     }
 }

@@ -10,17 +10,18 @@ CREATE TABLE customers (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create customer_payments table with foreign key to customers.id
 CREATE TABLE customer_payments (
     id BIGSERIAL PRIMARY KEY,
     customer_id BIGINT NOT NULL REFERENCES customers(id) ON DELETE RESTRICT,
     price DECIMAL(10, 2) NOT NULL,
+    point DECIMAL(10, 2) NOT NULL,
     price_modifier DECIMAL(10, 2) NOT NULL,
     payment_method VARCHAR(20) NOT NULL,
     datetime TIMESTAMP WITH TIME ZONE NOT NULL,
     metadata JSONB,
 
     CONSTRAINT positive_price CHECK (price >= 0),
+    CONSTRAINT positive_point CHECK (point >= 0),
     CONSTRAINT positive_price_modifier CHECK (price_modifier > 0),
 
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
