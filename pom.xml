@@ -18,28 +18,21 @@
 
 	<properties>
 		<java.version>21</java.version>
-		<flyway.version>11.5.0</flyway.version>
 		<grpc.kotlin.version>1.4.1</grpc.kotlin.version>
 		<grpc.version>1.71.0</grpc.version>
 		<jackson.kotlin.version>2.18.3</jackson.kotlin.version>
-		<jooq.version>3.20.2</jooq.version>
-		<kotlin.version>1.9.25</kotlin.version>
 		<mockk.version>1.13.17</mockk.version>
-		<protobuf-java.version>3.25.6</protobuf-java.version>
 		<protobuf.version>4.30.2</protobuf.version>
 		<protobuf.protoc.version>3.25.6</protobuf.protoc.version>
 		<spring-grpc.version>3.1.0.RELEASE</spring-grpc.version>
-		<testcontainers.version>1.20.6</testcontainers.version>
 	</properties>
 
 	<dependencies>
-		<!-- Spring Boot Starters -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jooq</artifactId>
 		</dependency>
 
-		<!-- Kotlin -->
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-reflect</artifactId>
@@ -54,7 +47,6 @@
 			<version>${jackson.kotlin.version}</version>
 		</dependency>
 
-		<!-- Database -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -69,16 +61,13 @@
 			<artifactId>flyway-database-postgresql</artifactId>
 		</dependency>
 
-		<!-- jOOQ -->
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq</artifactId>
-			<version>${jooq.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jooq</groupId>
 			<artifactId>jooq-meta</artifactId>
-			<version>${jooq.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jooq</groupId>
@@ -91,7 +80,6 @@
 			<version>${jooq.version}</version>
 		</dependency>
 
-		<!-- gRPC -->
 		<dependency>
 			<groupId>io.grpc</groupId>
 			<artifactId>grpc-kotlin-stub</artifactId>
@@ -118,7 +106,6 @@
 			<version>${spring-grpc.version}</version>
 		</dependency>
 
-		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -144,19 +131,16 @@
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>testcontainers</artifactId>
-			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
-			<version>${testcontainers.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -166,14 +150,11 @@
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 
 		<plugins>
-			<!-- Kotlin Compiler -->
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<configuration>
-					<args>
-						<arg>-Xjsr305=strict</arg>
-					</args>
+					<jvmTarget>${java.version}</jvmTarget>
 					<compilerPlugins>
 						<plugin>spring</plugin>
 					</compilerPlugins>
@@ -187,13 +168,11 @@
 				</dependencies>
 			</plugin>
 
-			<!-- Spring Boot -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 
-			<!-- gRPC Protobuf -->
 			<plugin>
 				<groupId>org.xolstice.maven.plugins</groupId>
 				<artifactId>protobuf-maven-plugin</artifactId>
@@ -250,11 +229,9 @@
 				</executions>
 			</plugin>
 
-			<!-- Database Migration -->
 			<plugin>
 				<groupId>org.flywaydb</groupId>
 				<artifactId>flyway-maven-plugin</artifactId>
-				<version>${flyway.version}</version>
 				<configuration>
 					<url>jdbc:postgresql://localhost:5432/appdb</url>
 					<user>postgres</user>
@@ -266,7 +243,6 @@
 			<plugin>
 				<groupId>org.jooq</groupId>
 				<artifactId>jooq-codegen-maven</artifactId>
-				<version>${jooq.version}</version>
 				<executions>
 					<execution>
 						<id>generate-jooq-code</id>
