@@ -37,31 +37,31 @@ class PaymentGrpcServiceComponentTest : ComponentTestBase() {
             Stream.of(
                 PaymentTestData(
                     paymentMethod = "MASTERCARD",
-                    priceModifier = "1",
+                    priceModifier = "0.95",
                     additionalFields = mapOf("last4" to "1234"),
                     expectedPoints = Decimal.newBuilder().setValue("3.0000").build(),
-                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                    expectedFinalPrice = Decimal.newBuilder().setValue("95.0000").build()
                 ),
                 PaymentTestData(
                     paymentMethod = "VISA",
-                    priceModifier = "1",
+                    priceModifier = "0.95",
                     additionalFields = mapOf("last4" to "5678"),
                     expectedPoints = Decimal.newBuilder().setValue("3.0000").build(),
-                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                    expectedFinalPrice = Decimal.newBuilder().setValue("95.0000").build()
                 ),
                 PaymentTestData(
                     paymentMethod = "AMEX",
-                    priceModifier = "1",
+                    priceModifier = "1.01",
                     additionalFields = mapOf("last4" to "9012"),
                     expectedPoints = Decimal.newBuilder().setValue("2.0000").build(),
-                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                    expectedFinalPrice = Decimal.newBuilder().setValue("101.0000").build()
                 ),
                 PaymentTestData(
                     paymentMethod = "JCB",
-                    priceModifier = "1",
+                    priceModifier = "0.95",
                     additionalFields = mapOf("last4" to "3456"),
                     expectedPoints = Decimal.newBuilder().setValue("5.0000").build(),
-                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                    expectedFinalPrice = Decimal.newBuilder().setValue("95.0000").build()
                 ),
                 PaymentTestData(
                     paymentMethod = "LINE_PAY",
@@ -89,10 +89,10 @@ class PaymentGrpcServiceComponentTest : ComponentTestBase() {
                 ),
                 PaymentTestData(
                     paymentMethod = "CHEQUE",
-                    priceModifier = "1",
+                    priceModifier = "0.9",
                     additionalFields = mapOf("bankName" to "Bangkok", "chequeNumber" to "123456"),
                     expectedPoints = Decimal.newBuilder().setValue("0.0000").build(),
-                    expectedFinalPrice = Decimal.newBuilder().setValue("100.00").build()
+                    expectedFinalPrice = Decimal.newBuilder().setValue("90.000").build()
                 ),
                 PaymentTestData(
                     paymentMethod = "BANK_TRANSFER",
