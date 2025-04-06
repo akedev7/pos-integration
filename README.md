@@ -83,7 +83,6 @@ make verify
 ```
 
 The result will be generated under `target/site/jacoco/index.html`
-
-![img.png](code-coverage.png)
+![test-coverage.png](test-coverage.png)
 
 

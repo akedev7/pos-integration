@@ -13,10 +13,7 @@ class PaymentRuleRepository(ctx: DSLContext) {
     init {
         val rules = ctx.selectFrom(PAYMENT_RULE).fetch()
         paymentRule = rules.map { rule ->
-            rule.paymentMethod to
-                    rule.pointsPercentage?.let {
-                        PaymentRule(rule.conditions, it)
-                    }
+            rule.paymentMethod to PaymentRule(rule.conditions, rule.pointsPercentage!!)
         }.toMap()
     }
 

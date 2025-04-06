@@ -302,6 +302,7 @@
 						</goals>
 						<configuration>
 							<excludes>
+								<exclude>com/akedev7/pos/PosApplicationKt*</exclude>
 								<exclude>com/akedev7/pos/adapters/postgres/jooq/**</exclude>
 								<exclude>com/akedev7/pos/adapters/grpc/protobuf/**</exclude>
 							</excludes>
