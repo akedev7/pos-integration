@@ -1,43 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.akedev7</groupId>
 	<artifactId>pos</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>pos</name>
 	<description>POS integration</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+
 	<properties>
 		<java.version>21</java.version>
-		<grpc.version>1.70.0</grpc.version>
-		<kotlin.version>1.9.25</kotlin.version>
-		<protobuf-java.version>3.25.6</protobuf-java.version>
-		<spring-grpc.version>0.5.0</spring-grpc.version>
+		<grpc.kotlin.version>1.4.1</grpc.kotlin.version>
+		<grpc.version>1.71.0</grpc.version>
+		<jackson.kotlin.version>2.18.3</jackson.kotlin.version>
+		<mockk.version>1.13.17</mockk.version>
+		<protobuf.version>4.30.2</protobuf.version>
+		<protobuf.protoc.version>3.25.6</protobuf.protoc.version>
+		<spring-grpc.version>3.1.0.RELEASE</spring-grpc.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
-			<groupId>io.grpc</groupId>
-			<artifactId>grpc-services</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jetbrains.kotlin</groupId>
 			<artifactId>kotlin-reflect</artifactId>
@@ -47,8 +42,9 @@
 			<artifactId>kotlin-stdlib</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.grpc</groupId>
-			<artifactId>spring-grpc-spring-boot-starter</artifactId>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-kotlin</artifactId>
+			<version>${jackson.kotlin.version}</version>
 		</dependency>
 
 		<dependency>
@@ -56,6 +52,60 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-meta-extensions</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>jooq-codegen</artifactId>
+			<version>${jooq.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-kotlin-stub</artifactId>
+			<version>${grpc.kotlin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-protobuf</artifactId>
+			<version>${grpc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-kotlin</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java-util</artifactId>
+			<version>${protobuf.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.devh</groupId>
+			<artifactId>grpc-spring-boot-starter</artifactId>
+			<version>${spring-grpc.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -67,74 +117,44 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.grpc</groupId>
-			<artifactId>spring-grpc-test</artifactId>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-testing</artifactId>
+			<version>${grpc.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.mockk</groupId>
+			<artifactId>mockk-jvm</artifactId>
+			<version>${mockk.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.grpc</groupId>
-				<artifactId>spring-grpc-dependencies</artifactId>
-				<version>${spring-grpc.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 	<build>
 		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+
 		<plugins>
-			<plugin>
-				<groupId>kr.motd.maven</groupId>
-				<artifactId>os-maven-plugin</artifactId>
-				<version>1.7.1</version>
-				<executions>
-					<execution>
-						<id>initialize</id>
-						<phase>initialize</phase>
-						<goals>
-							<goal>detect</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.xolstice.maven.plugins</groupId>
-				<artifactId>protobuf-maven-plugin</artifactId>
-				<version>0.6.1</version>
-				<configuration>
-					<protocArtifact>com.google.protobuf:protoc:${protobuf-java.version}:exe:${os.detected.classifier}</protocArtifact>
-					<pluginId>grpc-java</pluginId>
-					<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
-				</configuration>
-				<executions>
-					<execution>
-						<id>compile</id>
-						<goals>
-							<goal>compile</goal>
-							<goal>compile-custom</goal>
-						</goals>
-						<configuration>
-							<pluginParameter>jakarta_omit,@generated=omit</pluginParameter>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
 				<artifactId>kotlin-maven-plugin</artifactId>
 				<configuration>
-					<args>
-						<arg>-Xjsr305=strict</arg>
-					</args>
+					<jvmTarget>${java.version}</jvmTarget>
 					<compilerPlugins>
 						<plugin>spring</plugin>
 					</compilerPlugins>
@@ -147,7 +167,171 @@
 					</dependency>
 				</dependencies>
 			</plugin>
+
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+
+			<plugin>
+				<groupId>org.xolstice.maven.plugins</groupId>
+				<artifactId>protobuf-maven-plugin</artifactId>
+				<version>0.6.1</version>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<goals>
+							<goal>compile</goal>
+							<goal>compile-custom</goal>
+						</goals>
+						<configuration>
+							<protocArtifact>com.google.protobuf:protoc:${protobuf.protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+							<pluginId>grpc-java</pluginId>
+							<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+							<protocPlugins>
+								<protocPlugin>
+									<id>grpc-kotlin</id>
+									<groupId>io.grpc</groupId>
+									<artifactId>protoc-gen-grpc-kotlin</artifactId>
+									<version>${grpc.kotlin.version}</version>
+									<classifier>jdk8</classifier>
+									<mainClass>io.grpc.kotlin.generator.GeneratorRunner</mainClass>
+								</protocPlugin>
+							</protocPlugins>
+						</configuration>
+					</execution>
+					<execution>
+						<id>compile-kt</id>
+						<goals>
+							<goal>compile-custom</goal>
+						</goals>
+						<configuration>
+							<protocArtifact>com.google.protobuf:protoc:${protobuf.protoc.version}:exe:${os.detected.classifier}</protocArtifact>
+							<outputDirectory>${project.build.directory}/generated-sources/protobuf/kotlin</outputDirectory>
+							<pluginId>kotlin</pluginId>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- OS Detection -->
+			<plugin>
+				<groupId>kr.motd.maven</groupId>
+				<artifactId>os-maven-plugin</artifactId>
+				<version>1.7.1</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>detect</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/appdb</url>
+					<user>postgres</user>
+					<password>postgres</password>
+				</configuration>
+			</plugin>
+
+			<!-- jOOQ Code Generation -->
+			<plugin>
+				<groupId>org.jooq</groupId>
+				<artifactId>jooq-codegen-maven</artifactId>
+				<executions>
+					<execution>
+						<id>generate-jooq-code</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<generator>
+						<name>org.jooq.codegen.KotlinGenerator</name>
+						<database>
+							<name>org.jooq.meta.postgres.PostgresDatabase</name>
+							<inputSchema>public</inputSchema>
+						</database>
+						<generate>
+							<deprecated>false</deprecated>
+							<kotlinSetterJvmNameAnnotationsOnIsPrefix>true</kotlinSetterJvmNameAnnotationsOnIsPrefix>
+							<pojosAsKotlinDataClasses>true</pojosAsKotlinDataClasses>
+							<fluentSetters>true</fluentSetters>
+						</generate>
+						<target>
+							<packageName>com.akedev7.pos.adapters.postgres.jooq</packageName>
+							<directory>target/generated-sources/jooq</directory>
+						</target>
+						<strategy>
+							<name>org.jooq.codegen.DefaultGeneratorStrategy</name>
+						</strategy>
+					</generator>
+					<jdbc>
+						<driver>org.postgresql.Driver</driver>
+						<url>jdbc:postgresql://localhost:5432/appdb</url>
+						<user>postgres</user>
+						<password>postgres</password>
+					</jdbc>
+					<logging>WARN</logging>
+				</configuration>
+			</plugin>
+
+			<!-- Code Coverage -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.10</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>com/akedev7/pos/PosApplicationKt*</exclude>
+								<exclude>com/akedev7/pos/adapters/postgres/jooq/**</exclude>
+								<exclude>com/akedev7/pos/adapters/grpc/protobuf/**</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>check</id>
+						<phase>test</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<limits>
+										<limit>
+											<minimum>0.80</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+							<excludes>
+								<exclude>com/akedev7/pos/adapters/postgres/jooq/**</exclude>
+								<exclude>com/akedev7/pos/adapters/grpc/protobuf/**</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>

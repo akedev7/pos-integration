@@ -1,0 +1,8 @@
+grpc:
+  server:
+    in-process-name: pos-integration
+    port: -1
+  client:
+    inProcess:
+      address: in-process:pos-integration
+      negotiation-type: PLAINTEXT

@@ -1,0 +1,11 @@
+services:
+  app:
+    image: 'pos-integration'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: app
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/appdb
+    ports:
+      - "9090:9090"

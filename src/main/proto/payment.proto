@@ -1,24 +1,44 @@
 syntax = "proto3";
 
-package com.akedev7.payment;
+package com.akedev7.pos.adapters.grpc.protobuf;
 
-option java_multiple_files = true;
-option java_generic_services = true;
+import "google/type/decimal.proto";
+import "src/google/protobuf/struct.proto";
+import "src/google/protobuf/timestamp.proto";
 
 service PaymentService {
     rpc ProcessPayment (PaymentRequest) returns (PaymentResponse);
 }
 
+service SalesService {
+    rpc GetSalesData (SalesDataRequest) returns (SalesDataResponse);
+}
+
 message PaymentRequest {
-    string customerId = 1;
-    double price = 2;
-    double priceModifier = 3;
-    string paymentMethod = 4;
-    string datetime = 5;
-    map<string, string> additionalItem = 6;
+    string customer_id = 1;
+    google.type.Decimal price = 2;
+    google.type.Decimal price_modifier = 3;
+    string payment_method = 4;
+    google.protobuf.Timestamp datetime = 5;
+    google.protobuf.Struct additional_item = 6;
 }
 
 message PaymentResponse {
-    double finalPrice = 1;
-    int32 points = 2;
+    google.type.Decimal final_price = 1;
+    google.type.Decimal points = 2;
+}
+
+message SalesDataRequest {
+    google.protobuf.Timestamp start_date_time = 1;
+    google.protobuf.Timestamp end_date_time = 2;
+}
+
+message SalesDataResponse {
+    repeated SalesRecord sales = 1;
+}
+
+message SalesRecord {
+    google.protobuf.Timestamp datetime = 1;
+    google.type.Decimal sales = 2;
+    google.type.Decimal points = 3;
 }
